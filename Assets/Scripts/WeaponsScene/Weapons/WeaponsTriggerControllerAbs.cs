@@ -10,7 +10,7 @@ public abstract class WeaponsTriggerControllerAbs : MonoBehaviour
 
     private void Start()
     {
-        _robotShoot = RobotShoot.instance;
+        _robotShoot = RobotShoot.Instance;
     }
 
     private void OnTriggerEnter(Collider other)

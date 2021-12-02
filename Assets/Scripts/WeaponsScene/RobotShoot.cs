@@ -13,14 +13,10 @@ using Random = UnityEngine.Random;
 
 public class RobotShoot : MonoBehaviour
 {
-    public static RobotShoot instance;
-    
-    public static bool WeaponsActive;
-    
-    public static int WeaponActiveId = 0;
-    
+    public static RobotShoot Instance;
 
-    private static Enums.SelectedProjectile _selectedProjectile;
+    private static bool _weaponsActive;
+    private static int _weaponActiveId;
 
     private SaveManager _saveManager;
     private ParabolicProjectile _parabolicProjectile;
@@ -39,8 +35,8 @@ public class RobotShoot : MonoBehaviour
     [SerializeField] private float range;
 
     private Vector3 _destination;
-    private float ExplosiveProjectileSpeed;
-    [SerializeField] private float OrbitProjectileSpeed;
+    private float _explosiveProjectileSpeed;
+    private float _orbitProjectileSpeed;
     
     private Vector3 _directionWithoutSpread;
     private Vector3 _directionWithSpread;
@@ -53,16 +49,18 @@ public class RobotShoot : MonoBehaviour
     public bool leftButtonClicked;
     
 
-    [SerializeField] private GameObject cursor;
+    
     [SerializeField] private LayerMask layer;
 
     [SerializeField] private GameObject[] weaponsPackages;
     [SerializeField] private Camera playerCamera;
 
-    public void Initialize(ParabolicProjectile parabolicProjectile,OrbitProjectile orbitProjectile,ExplosiveProjectile explosiveProjectile,OrbitScriptableObject orbitScriptableObject,ExplosiveScriptableObject explosiveScriptableObject)
+    public void Initialize(ParabolicProjectile parabolicProjectile,OrbitProjectile orbitProjectile,
+        ExplosiveProjectile explosiveProjectile,OrbitScriptableObject orbitScriptableObject,
+        ExplosiveScriptableObject explosiveScriptableObject)
     {
         InputManager.PlayerInputs.Player.Back.performed += ctx => ChangeWeaponActive(3);
-        instance = this;
+        Instance = this;
         _saveManager = SaveManager.Instance;
         
         CustomVoids.GetListFromHierarchyTR(true,frontShootPointsP.transform,firePointsTransforms);
@@ -74,7 +72,7 @@ public class RobotShoot : MonoBehaviour
         
         InputManager.PlayerInputs.Player.LeftButton.performed += ctx => { OneShot(); };
         
-        WeaponsActive = true;
+        _weaponsActive = true;
     }
 
     private void OneShot()
@@ -88,17 +86,17 @@ public class RobotShoot : MonoBehaviour
         switch (id)
         {
             case 0:
-                WeaponActiveId = 0;
+                _weaponActiveId = 0;
                 playerCamera.gameObject.SetActive(false);
                 ManagerS2.PlayerCanMove = false;
                 LookWithMouse.CursorState(false);
-                LookWithMouse.instance.enabled = false;
+                LookWithMouse.Instance.enabled = false;
                 weaponsPackages[0].SetActive(true);
                 weaponsPackages[1].SetActive(false);
                 weaponsPackages[2].SetActive(false);
                 
                 break;
-            case 1: WeaponActiveId = 1;
+            case 1: _weaponActiveId = 1;
                 _orbitProjectile.ModifyOrbitValues(orbitScriptableObject.smallestRadiusToOrbit,
                     orbitScriptableObject.biggestRadiusToOrbit,
                     orbitScriptableObject.smallestRotationSpeedToOrbit,
@@ -106,31 +104,31 @@ public class RobotShoot : MonoBehaviour
                 playerCamera.gameObject.SetActive(true);
                 ManagerS2.PlayerCanMove = true;
                 LookWithMouse.CursorState(true);
-                LookWithMouse.instance.enabled = true;
+                LookWithMouse.Instance.enabled = true;
                 weaponsPackages[0].SetActive(false);
                 weaponsPackages[1].SetActive(true);
                 weaponsPackages[2].SetActive(false);
                 
                 break;
             case 2:
-                WeaponActiveId = 2;
+                _weaponActiveId = 2;
                 _explosiveProjectile.ModifyProjectileConfig(explosiveScriptableObject.delay,
                     explosiveScriptableObject.explosionRadius,explosiveScriptableObject.explosionForce);
                 playerCamera.gameObject.SetActive(true);
                 ManagerS2.PlayerCanMove = true;
                 LookWithMouse.CursorState(true);
-                LookWithMouse.instance.enabled = true;
+                LookWithMouse.Instance.enabled = true;
                 weaponsPackages[0].SetActive(false);
                 weaponsPackages[1].SetActive(false);
                 weaponsPackages[2].SetActive(true);
                 
                 break;
             case 3:
-                WeaponActiveId = 3;
+                _weaponActiveId = 3;
                 playerCamera.gameObject.SetActive(true);
                 ManagerS2.PlayerCanMove = true;
                 LookWithMouse.CursorState(true);
-                LookWithMouse.instance.enabled = true;
+                LookWithMouse.Instance.enabled = true;
                 weaponsPackages[0].SetActive(false);
                 weaponsPackages[1].SetActive(false);
                 weaponsPackages[2].SetActive(false);
@@ -145,7 +143,7 @@ public class RobotShoot : MonoBehaviour
     {
         #region WeaponsActive
 
-        if (!WeaponsActive) return;
+        if (!_weaponsActive) return;
             var rayMouse = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             if (Physics.Raycast(rayMouse,out var hit,1000f, layer)) {
@@ -170,11 +168,11 @@ public class RobotShoot : MonoBehaviour
             }
 
             // ReSharper disable once HeapView.BoxingAllocation
-            var valueF = Enum.GetName(typeof(Enums.SelectedProjectile), value: WeaponActiveId);
+            var valueF = Enum.GetName(typeof(Enums.SelectedProjectile), value: _weaponActiveId);
                 
             Debug.Log("Shooting" + valueF);
 
-            switch (WeaponActiveId)
+            switch (_weaponActiveId)
             {
                 case 0: 
                     Debug.Log(_saveManager.GetParabolicProjectileQ());
@@ -193,8 +191,8 @@ public class RobotShoot : MonoBehaviour
                     }
                     else {
                         _parabolicProjectile.EnableBehaviour(false);
-                        OrbitProjectileSpeed = orbitScriptableObject.speedOfShoot;
-                        ShotSpecificFirePoint(valueF,1,OrbitProjectileSpeed); 
+                        _orbitProjectileSpeed = orbitScriptableObject.speedOfShoot;
+                        ShotSpecificFirePoint(valueF,1,_orbitProjectileSpeed); 
                         Debug.Log("Orbiter Projectile Shot");
                         _saveManager.SubstractOrbiterProjectiles(1);
                     }
@@ -207,8 +205,8 @@ public class RobotShoot : MonoBehaviour
                     else
                     { 
                         _parabolicProjectile.EnableBehaviour(false);
-                        ExplosiveProjectileSpeed = explosiveScriptableObject.speedOfShoot;
-                        ShotSpecificFirePoint(valueF,2,ExplosiveProjectileSpeed);
+                        _explosiveProjectileSpeed = explosiveScriptableObject.speedOfShoot;
+                        ShotSpecificFirePoint(valueF,2,_explosiveProjectileSpeed);
                         SaveManager.Instance.ModifyExplosiveProjectileQ(false,1);
                     }
                     break;
@@ -218,7 +216,7 @@ public class RobotShoot : MonoBehaviour
 
                     break;
             }
-            return;
+            
         #endregion
 
     }

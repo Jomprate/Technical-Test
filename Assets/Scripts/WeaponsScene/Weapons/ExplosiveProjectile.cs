@@ -4,18 +4,19 @@ namespace Weapons
 {
     public class ExplosiveProjectile : MonoBehaviour
     {
-        private Rigidbody _rb;
+        #region Fields
+
         private float _countDown;
-    
         public float delay = 3f;
         public float explosionRadius = 2f;
         public float explosionForce = 50f;
         public bool hasExploded = false;
+        #endregion
 
         private void Start() {
             hasExploded = false;
             _countDown = delay;
-            _rb = GetComponent<Rigidbody>();
+            
         }
 
         private void StartCounter() => enabled = true;

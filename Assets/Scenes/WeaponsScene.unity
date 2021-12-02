@@ -1094,7 +1094,7 @@ MonoBehaviour:
   firePointsTransforms: []
   cam: {fileID: 776161055}
   range: 200
-  shotGunSpeed: 4
+  OrbitProjectileSpeed: 0
   leftButtonClicked: 0
   cursor: {fileID: 0}
   layer:
@@ -21430,27 +21430,13 @@ MonoBehaviour:
   - tag: ExplosiveProjectile
     prefab: {fileID: 2767006753903720226, guid: 41c978b0c919fc045b37fe87877034df, type: 3}
     size: 100
-  - tag: SphereWoRB
-    prefab: {fileID: 6648919146217681435, guid: f96df409cd936004389d4d80b7cb6672, type: 3}
-    size: 0
-  - tag: WeaponSce2
-    prefab: {fileID: 2493720359202170154, guid: 29821f9b93c62b9409fdd577a11ca984, type: 3}
-    size: 0
-  - tag: WeaponSce3
-    prefab: {fileID: 6519371481882501901, guid: dfaa1befb31af8847a51ab3fa37bc052, type: 3}
-    size: 0
   bulletsContainer: {fileID: 1338491447}
-  bulletDecalsP: {fileID: 0}
   parabolicProjectileP: {fileID: 1847205287}
   orbiterProjectileP: {fileID: 640447562}
   explosiveProjectileP: {fileID: 532325293}
-  weapon1SceP: {fileID: 0}
-  weapon2SceP: {fileID: 0}
-  weapon3SceP: {fileID: 784608700}
-  _positionReset: {fileID: 1526983970}
-  parabolicProjectilesPack: []
-  orbitProjectilesPack: []
-  explosiveProjectilesPack: []
+  parabolicProjectileL: []
+  orbiterProjectileL: []
+  explosiveProjectileL: []
 --- !u!1 &1338694026 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2493720357911282307, guid: 29821f9b93c62b9409fdd577a11ca984, type: 3}
@@ -23048,11 +23034,8 @@ MonoBehaviour:
   controller: {fileID: 1436557484}
   speed: 12
   cameraMoveDir: {x: 0, y: 0}
-  rotationSpeed: 4
   playerTransform: {fileID: 1436557482}
-  _rb: {fileID: 1436557481}
   desiredHeight: 2
-  mouseSensitivity: 1
   floorIsDown: 0
 --- !u!143 &1436557484
 CharacterController:

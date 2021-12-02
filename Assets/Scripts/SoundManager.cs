@@ -39,8 +39,6 @@ public class SoundManager : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(this);
-
         _musicSource = this.gameObject.AddComponent<AudioSource>();
         _musicSource2 = this.gameObject.AddComponent<AudioSource>();
         _sfxSource = this.gameObject.AddComponent<AudioSource>();

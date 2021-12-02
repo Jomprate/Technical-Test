@@ -1,30 +1,21 @@
-using UnityEngine.InputSystem;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Managers;
 using UnityEngine;
 
 public class PlayerMovementCorrect : MonoBehaviour
 {
+    #region Fields
     public CharacterController controller;
         
     public float speed = 12f;
     private Vector2 _moveDirection;
     private Vector3 _move;
-    [SerializeField] private Vector2 cameraMoveDir;
-    [SerializeField] private float rotationSpeed = 4f;
-    
     [SerializeField] private Transform playerTransform;
 
-    [SerializeField] private Rigidbody _rb;
-    
     [Header("Hover")]
     public float desiredHeight = 2f;
     private float _offsetDistance, _differenceFloorDesiredHeight;
     private const float MovementStep = 0.1f;
     private Vector3 _targetPosition;
-    [SerializeField] private float mouseSensitivity = 100f;
     private const string FloorTag = "Floor";
     
 
@@ -36,55 +27,34 @@ public class PlayerMovementCorrect : MonoBehaviour
     private float _sprintSpeed;
     
 
-    
-    
+    #endregion
 
-    private void Start()
-    {
-        Initialize();
-    }
+    private void Start() => Initialize();
 
-    public void Initialize()
-    {
+    private void Initialize() {
         _normalSpeed = 10f; _sprintSpeed = 16f;
         _sprinting = false;
-
-        _rb = gameObject.GetComponent<Rigidbody>();
-        
         InputManager.PlayerInputs.Player.Movement.performed += 
             context => MoveAxis(context.ReadValue<Vector2>());
-        InputManager.PlayerInputs.Player.CameraMovement.performed +=
-            context => CamAxis(context.ReadValue<Vector2>());
+        
         InputManager.PlayerInputs.Player.Sprint.performed += context => Sprint();
     }
 
     //Input Usage to set the movement direction
     private void MoveAxis(Vector2 direction) => _moveDirection = direction;
 
-    private void CamAxis(Vector2 camDirection) => cameraMoveDir = camDirection;
-
     //Update Method
     private void Update() { if (ManagerS2.PlayerCanMove) { PlayerMovementOnly(); } }
-
+    //FixedUpdate Method
     private void FixedUpdate() { if (ManagerS2.PlayerCanMove) { HoverRayCast(); } }
-
     
-
-    private void Sprint()
-    {
+    //Used to change between walking & Sprinting
+    private void Sprint() {
         switch (_sprinting) {
-            case true:
-                speed = _normalSpeed;
-                _sprinting = false;
-                return;
-            case false:
-                speed = _sprintSpeed;
-                _sprinting = true;
-                return;
+            case true: speed = _normalSpeed; _sprinting = false; return;
+            case false: speed = _sprintSpeed; _sprinting = true; return;
         }
     }
-
-    
 
     //Let the player movement
     private void PlayerMovementOnly()
@@ -97,8 +67,7 @@ public class PlayerMovementCorrect : MonoBehaviour
         controller.Move(_move * (speed * Time.deltaTime));
         
     }
-
-
+    
     #region Hover Player Movement
     
     //RayCast To calculate player floor distance
